@@ -1,0 +1,109 @@
+{
+  "model": "Concatenation Fusion (EfficientNet-B0 + DistilBERT)",
+  "purpose": "Multimodal baseline - concatenate image (1280) + text (768) features",
+  "config": {
+    "num_folds": 5,
+    "num_epochs": 25,
+    "batch_size": 16,
+    "encoder_lr": 1e-05,
+    "classifier_lr": 0.0001,
+    "image_size": 224,
+    "max_token_length": 64,
+    "patience": 7,
+    "group_splitting": "GroupKFold by image_path"
+  },
+  "cv_results": {
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_val_accuracy": 0.7206,
+        "best_val_f1_macro": 0.7164
+      },
+      {
+        "fold": 2,
+        "best_val_accuracy": 0.7064,
+        "best_val_f1_macro": 0.7008
+      },
+      {
+        "fold": 3,
+        "best_val_accuracy": 0.6695,
+        "best_val_f1_macro": 0.6742
+      },
+      {
+        "fold": 4,
+        "best_val_accuracy": 0.7162,
+        "best_val_f1_macro": 0.7195
+      },
+      {
+        "fold": 5,
+        "best_val_accuracy": 0.6962,
+        "best_val_f1_macro": 0.6994
+      }
+    ],
+    "mean_accuracy": 0.70178,
+    "std_accuracy": 0.01820224162019612,
+    "mean_f1_macro": 0.70206,
+    "std_f1_macro": 0.01609119013622051
+  },
+  "test_results": {
+    "test_accuracy": 0.7325268817204301,
+    "test_f1_macro": 0.7320332989106694,
+    "test_loss": 0.6337921974506784,
+    "confusion_matrix": [
+      [
+        182,
+        63,
+        1
+      ],
+      [
+        24,
+        146,
+        55
+      ],
+      [
+        0,
+        56,
+        217
+      ]
+    ],
+    "classification_report": {
+      "minor": {
+        "precision": 0.883495145631068,
+        "recall": 0.7398373983739838,
+        "f1-score": 0.8053097345132744,
+        "support": 246.0
+      },
+      "moderate": {
+        "precision": 0.5509433962264151,
+        "recall": 0.6488888888888888,
+        "f1-score": 0.5959183673469388,
+        "support": 225.0
+      },
+      "severe": {
+        "precision": 0.7948717948717948,
+        "recall": 0.7948717948717948,
+        "f1-score": 0.7948717948717948,
+        "support": 273.0
+      },
+      "accuracy": 0.7325268817204301,
+      "macro avg": {
+        "precision": 0.7431034455764259,
+        "recall": 0.7278660273782225,
+        "f1-score": 0.7320332989106694,
+        "support": 744.0
+      },
+      "weighted avg": {
+        "precision": 0.7504060080325083,
+        "recall": 0.7325268817204301,
+        "f1-score": 0.7381556819130736,
+        "support": 744.0
+      }
+    }
+  },
+  "unimodal_baselines": {
+    "image_only_test_accuracy": 0.702,
+    "image_only_test_f1": 0.684,
+    "text_only_test_accuracy": 0.653,
+    "text_only_test_f1": 0.658
+  }
+}

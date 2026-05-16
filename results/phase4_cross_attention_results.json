@@ -1,0 +1,208 @@
+{
+  "model": "Cross-Attention Fusion (EfficientNet-B0 + DistilBERT)",
+  "purpose": "Multimodal fusion \u2014 image spatial regions attend to text tokens",
+  "config": {
+    "num_folds": 5,
+    "num_epochs": 25,
+    "batch_size": 16,
+    "encoder_lr": 1e-05,
+    "classifier_lr": 0.0001,
+    "image_size": 224,
+    "max_token_length": 64,
+    "patience": 7,
+    "image_unfreeze_blocks": 3,
+    "text_unfreeze_layers": 2,
+    "d_k": 512,
+    "num_heads": 8,
+    "group_splitting": "GroupKFold by image_path"
+  },
+  "cv_results": {
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_val_accuracy": 0.7009803921568627,
+        "best_val_f1_macro": 0.7018234515461824,
+        "best_val_loss": 0.7243731173814512,
+        "confusion_matrix": [
+          [
+            201,
+            57,
+            6
+          ],
+          [
+            45,
+            159,
+            72
+          ],
+          [
+            8,
+            56,
+            212
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\cross_attention_fusion_fold1.pt"
+      },
+      {
+        "fold": 2,
+        "best_val_accuracy": 0.6842751842751843,
+        "best_val_f1_macro": 0.6743524601180518,
+        "best_val_loss": 0.8267429254803003,
+        "confusion_matrix": [
+          [
+            204,
+            45,
+            13
+          ],
+          [
+            87,
+            124,
+            59
+          ],
+          [
+            20,
+            33,
+            229
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\cross_attention_fusion_fold2.pt"
+      },
+      {
+        "fold": 3,
+        "best_val_accuracy": 0.6842751842751843,
+        "best_val_f1_macro": 0.6795557213729005,
+        "best_val_loss": 0.7725998601492714,
+        "confusion_matrix": [
+          [
+            212,
+            41,
+            6
+          ],
+          [
+            60,
+            130,
+            83
+          ],
+          [
+            5,
+            62,
+            215
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\cross_attention_fusion_fold3.pt"
+      },
+      {
+        "fold": 4,
+        "best_val_accuracy": 0.7223587223587223,
+        "best_val_f1_macro": 0.7175431004279323,
+        "best_val_loss": 0.6983932803074518,
+        "confusion_matrix": [
+          [
+            219,
+            31,
+            8
+          ],
+          [
+            72,
+            145,
+            60
+          ],
+          [
+            2,
+            53,
+            224
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\cross_attention_fusion_fold4.pt"
+      },
+      {
+        "fold": 5,
+        "best_val_accuracy": 0.7023370233702337,
+        "best_val_f1_macro": 0.7062354004138239,
+        "best_val_loss": 0.8544386806441289,
+        "confusion_matrix": [
+          [
+            187,
+            65,
+            3
+          ],
+          [
+            53,
+            184,
+            42
+          ],
+          [
+            14,
+            65,
+            200
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\cross_attention_fusion_fold5.pt"
+      }
+    ],
+    "mean_accuracy": 0.6988453012872375,
+    "std_accuracy": 0.014101122835442799,
+    "mean_f1_macro": 0.6959020267757782,
+    "std_f1_macro": 0.01638147413594341
+  },
+  "test_results": {
+    "test_accuracy": 0.7338709677419355,
+    "test_f1_macro": 0.7227015269069804,
+    "test_loss": 0.6708581815374658,
+    "confusion_matrix": [
+      [
+        225,
+        16,
+        5
+      ],
+      [
+        64,
+        122,
+        39
+      ],
+      [
+        12,
+        62,
+        199
+      ]
+    ],
+    "classification_report": {
+      "minor": {
+        "precision": 0.7475083056478405,
+        "recall": 0.9146341463414634,
+        "f1-score": 0.8226691042047533,
+        "support": 246.0
+      },
+      "moderate": {
+        "precision": 0.61,
+        "recall": 0.5422222222222223,
+        "f1-score": 0.5741176470588235,
+        "support": 225.0
+      },
+      "severe": {
+        "precision": 0.8189300411522634,
+        "recall": 0.7289377289377289,
+        "f1-score": 0.7713178294573644,
+        "support": 273.0
+      },
+      "accuracy": 0.7338709677419355,
+      "macro avg": {
+        "precision": 0.7254794489333679,
+        "recall": 0.7285980325004715,
+        "f1-score": 0.7227015269069804,
+        "support": 744.0
+      },
+      "weighted avg": {
+        "precision": 0.7321303016450762,
+        "recall": 0.7338709677419355,
+        "f1-score": 0.7286597280436358,
+        "support": 744.0
+      }
+    }
+  },
+  "elapsed_seconds": 6354.898122549057,
+  "baselines": {
+    "image_only_test_f1": 0.684,
+    "text_only_test_f1": 0.658,
+    "concat_test_f1": 0.732
+  }
+}

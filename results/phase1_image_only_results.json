@@ -1,0 +1,195 @@
+{
+  "model": "EfficientNet-B0 (image-only)",
+  "config": {
+    "num_folds": 5,
+    "num_epochs": 30,
+    "batch_size": 32,
+    "learning_rate": 0.0001,
+    "image_size": 224,
+    "patience": 7
+  },
+  "cv_results": {
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_val_accuracy": 0.6859205776173285,
+        "best_val_f1_macro": 0.6626209504305945,
+        "best_val_loss": 0.7570417920748392,
+        "confusion_matrix": [
+          [
+            73,
+            12,
+            6
+          ],
+          [
+            19,
+            32,
+            41
+          ],
+          [
+            3,
+            6,
+            85
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\image_only_fold1.pt"
+      },
+      {
+        "fold": 2,
+        "best_val_accuracy": 0.7292418772563177,
+        "best_val_f1_macro": 0.726448865753308,
+        "best_val_loss": 0.6875106228722466,
+        "confusion_matrix": [
+          [
+            76,
+            14,
+            1
+          ],
+          [
+            26,
+            53,
+            13
+          ],
+          [
+            7,
+            14,
+            73
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\image_only_fold2.pt"
+      },
+      {
+        "fold": 3,
+        "best_val_accuracy": 0.6353790613718412,
+        "best_val_f1_macro": 0.6376611827054145,
+        "best_val_loss": 0.787236922317081,
+        "confusion_matrix": [
+          [
+            61,
+            27,
+            2
+          ],
+          [
+            23,
+            46,
+            24
+          ],
+          [
+            0,
+            25,
+            69
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\image_only_fold3.pt"
+      },
+      {
+        "fold": 4,
+        "best_val_accuracy": 0.6992753623188406,
+        "best_val_f1_macro": 0.6926112994745243,
+        "best_val_loss": 0.762921455833647,
+        "confusion_matrix": [
+          [
+            79,
+            9,
+            2
+          ],
+          [
+            25,
+            47,
+            21
+          ],
+          [
+            7,
+            19,
+            67
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\image_only_fold4.pt"
+      },
+      {
+        "fold": 5,
+        "best_val_accuracy": 0.6920289855072463,
+        "best_val_f1_macro": 0.6954837401020612,
+        "best_val_loss": 0.7722375326686435,
+        "confusion_matrix": [
+          [
+            68,
+            20,
+            2
+          ],
+          [
+            22,
+            58,
+            13
+          ],
+          [
+            3,
+            25,
+            65
+          ]
+        ],
+        "model_path": "C:\\D_Folder\\python_projects\\Defect severity prediction\\results\\image_only_fold5.pt"
+      }
+    ],
+    "mean_accuracy": 0.6883691728143149,
+    "std_accuracy": 0.030387052163656062,
+    "mean_f1_macro": 0.6829652076931805,
+    "std_f1_macro": 0.03035434974521709
+  },
+  "test_results": {
+    "test_accuracy": 0.7016129032258065,
+    "test_f1_macro": 0.6843477718453536,
+    "test_loss": 0.6053813993930817,
+    "confusion_matrix": [
+      [
+        66,
+        16,
+        0
+      ],
+      [
+        24,
+        33,
+        18
+      ],
+      [
+        1,
+        15,
+        75
+      ]
+    ],
+    "classification_report": {
+      "minor": {
+        "precision": 0.7252747252747253,
+        "recall": 0.8048780487804879,
+        "f1-score": 0.7630057803468208,
+        "support": 82.0
+      },
+      "moderate": {
+        "precision": 0.515625,
+        "recall": 0.44,
+        "f1-score": 0.4748201438848921,
+        "support": 75.0
+      },
+      "severe": {
+        "precision": 0.8064516129032258,
+        "recall": 0.8241758241758241,
+        "f1-score": 0.8152173913043478,
+        "support": 91.0
+      },
+      "accuracy": 0.7016129032258065,
+      "macro avg": {
+        "precision": 0.6824504460593172,
+        "recall": 0.6896846243187706,
+        "f1-score": 0.6843477718453536,
+        "support": 248.0
+      },
+      "weighted avg": {
+        "precision": 0.6916592711561331,
+        "recall": 0.7016129032258065,
+        "f1-score": 0.6950111588246043,
+        "support": 248.0
+      }
+    }
+  },
+  "elapsed_seconds": 1406.1520826816559
+}

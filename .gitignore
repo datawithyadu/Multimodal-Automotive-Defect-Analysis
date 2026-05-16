@@ -1,0 +1,17 @@
+# Environment & secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.ipynb_checkpoints/
+
+# Scratch files
+scratch_*.py
+scratch_*.txt
+
+# OS files
+Thumbs.db
+.DS_Store

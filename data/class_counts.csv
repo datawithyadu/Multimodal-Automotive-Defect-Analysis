@@ -1,0 +1,7 @@
+split,class,count,fraction
+train,01-minor,452,0.3268
+train,02-moderate,463,0.3348
+train,03-severe,468,0.3384
+test,01-minor,82,0.3306
+test,02-moderate,75,0.3024
+test,03-severe,91,0.3669

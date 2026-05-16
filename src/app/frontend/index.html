@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoDefect AI — Vehicle Damage Severity Predictor</title>
+    <meta name="description" content="Multimodal AI system for automotive defect severity prediction using damage images and complaint text.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated background particles -->
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow--3" aria-hidden="true"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__inner">
+            <div class="header__brand">
+                <div class="header__logo" aria-hidden="true">
+                    <svg viewBox="0 0 36 36" fill="none">
+                        <circle cx="18" cy="18" r="16" stroke="url(#logo-grad)" stroke-width="2.5"/>
+                        <path d="M12 22 L18 12 L24 22 Z" fill="url(#logo-grad)" opacity="0.85"/>
+                        <defs>
+                            <linearGradient id="logo-grad" x1="0" y1="0" x2="36" y2="36">
+                                <stop offset="0%" stop-color="#818CF8"/>
+                                <stop offset="100%" stop-color="#6366F1"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="header__title">AutoDefect<span class="header__title-ai">AI</span></h1>
+                    <p class="header__subtitle">Multimodal Severity Prediction</p>
+                </div>
+            </div>
+            <div class="header__badge">
+                <span class="status-dot" id="statusDot"></span>
+                <span class="header__status" id="statusText">Checking model...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+        <!-- Input section -->
+        <section class="card card--input" id="inputSection">
+            <div class="card__header">
+                <h2 class="card__title">
+                    <span class="card__icon">&#x1F4F7;</span>
+                    Upload &amp; Describe
+                </h2>
+                <p class="card__desc">Provide a vehicle damage image, a text description, or both for severity analysis.</p>
+            </div>
+
+            <!-- Mode indicator -->
+            <div class="mode-indicator" id="modeIndicator">
+                <span class="mode-indicator__icon" id="modeIcon">&#x2139;&#xFE0F;</span>
+                <span class="mode-indicator__text" id="modeText">Provide at least an image or text description to start.</span>
+            </div>
+
+            <form id="predictionForm" class="form" autocomplete="off">
+                <div class="form__grid">
+                    <!-- Image upload area -->
+                    <div class="form__group">
+                        <label class="form__label" for="imageInput">Damage Image <span class="form__optional">(optional)</span></label>
+                        <div class="upload-zone" id="uploadZone" tabindex="0" role="button" aria-label="Click or drag to upload an image">
+                            <input type="file" id="imageInput" accept="image/*" hidden>
+                            <div class="upload-zone__placeholder" id="uploadPlaceholder">
+                                <div class="upload-zone__icon">
+                                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="6" y="10" width="36" height="28" rx="4"/>
+                                        <circle cx="18" cy="22" r="4"/>
+                                        <path d="M6 34 L16 24 L24 32 L32 22 L42 32"/>
+                                    </svg>
+                                </div>
+                                <p class="upload-zone__text">Click or drag image here</p>
+                                <p class="upload-zone__hint">JPG, PNG, WebP — max 10 MB</p>
+                            </div>
+                            <div class="upload-zone__preview" id="uploadPreview" hidden>
+                                <img id="previewImage" alt="Uploaded damage image preview">
+                                <button type="button" class="upload-zone__remove" id="removeImage" title="Remove image">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text input area -->
+                    <div class="form__group">
+                        <label class="form__label" for="textInput">Damage Description <span class="form__optional">(optional)</span></label>
+                        <textarea
+                            id="textInput"
+                            class="form__textarea"
+                            placeholder="Describe the vehicle damage, e.g.&#10;&#10;&quot;The front bumper has a visible crack on the lower left side. Plastic substrate appears disrupted. The headlight housing shows slight misalignment.&quot;"
+                            rows="7"
+                            maxlength="500"
+                        ></textarea>
+                        <div class="form__meta">
+                            <span class="form__charcount"><span id="charCount">0</span>/500</span>
+                        </div>
+
+                        <!-- Model selector -->
+                        <div class="model-selector" id="modelSelector">
+                            <label class="form__label form__label--small">Fusion Model <span class="form__optional">(used when both inputs provided)</span></label>
+                            <div class="model-selector__options">
+                                <label class="model-option" id="optConcat">
+                                    <input type="radio" name="model_type" value="concat" checked>
+                                    <span class="model-option__card">
+                                        <span class="model-option__name">Concat Fusion</span>
+                                        <span class="model-option__meta">73.2% F1</span>
+                                    </span>
+                                </label>
+                                <label class="model-option" id="optCrossAttn">
+                                    <input type="radio" name="model_type" value="cross_attention">
+                                    <span class="model-option__card">
+                                        <span class="model-option__name">Cross-Attention</span>
+                                        <span class="model-option__meta">72.3% F1</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn--primary" id="predictBtn" disabled>
+                    <span class="btn__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2 L11 13"/>
+                            <path d="M22 2 L15 22 L11 13 L2 9 Z"/>
+                        </svg>
+                    </span>
+                    <span class="btn__text">Analyze Damage</span>
+                    <span class="btn__loader" hidden></span>
+                </button>
+            </form>
+        </section>
+
+        <!-- Results section (hidden until prediction) -->
+        <section class="card card--results" id="resultsSection" hidden>
+            <div class="card__header">
+                <h2 class="card__title">
+                    <span class="card__icon">&#x1F4CA;</span>
+                    Prediction Results
+                </h2>
+            </div>
+
+            <div class="results">
+                <!-- Mode badge -->
+                <div class="results__mode" id="resultModeBadge">
+                    <span class="results__mode-icon" id="resultModeIcon"></span>
+                    <span class="results__mode-text" id="resultModeText"></span>
+                </div>
+
+                <!-- Prediction badge -->
+                <div class="results__verdict" id="verdictContainer">
+                    <div class="verdict__label">Predicted Severity</div>
+                    <div class="verdict__value" id="verdictValue">—</div>
+                    <div class="verdict__confidence" id="verdictConfidence"></div>
+                </div>
+
+                <!-- Probability bars -->
+                <div class="results__probs">
+                    <h3 class="results__probs-title">Class Probabilities</h3>
+
+                    <div class="prob-bar" id="probMinor">
+                        <div class="prob-bar__header">
+                            <span class="prob-bar__label">
+                                <span class="prob-bar__dot prob-bar__dot--minor"></span>
+                                Minor
+                            </span>
+                            <span class="prob-bar__value" id="probMinorVal">0%</span>
+                        </div>
+                        <div class="prob-bar__track">
+                            <div class="prob-bar__fill prob-bar__fill--minor" id="probMinorFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="prob-bar" id="probModerate">
+                        <div class="prob-bar__header">
+                            <span class="prob-bar__label">
+                                <span class="prob-bar__dot prob-bar__dot--moderate"></span>
+                                Moderate
+                            </span>
+                            <span class="prob-bar__value" id="probModerateVal">0%</span>
+                        </div>
+                        <div class="prob-bar__track">
+                            <div class="prob-bar__fill prob-bar__fill--moderate" id="probModerateFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="prob-bar" id="probSevere">
+                        <div class="prob-bar__header">
+                            <span class="prob-bar__label">
+                                <span class="prob-bar__dot prob-bar__dot--severe"></span>
+                                Severe
+                            </span>
+                            <span class="prob-bar__value" id="probSevereVal">0%</span>
+                        </div>
+                        <div class="prob-bar__track">
+                            <div class="prob-bar__fill prob-bar__fill--severe" id="probSevereFill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Severity explanation -->
+                <div class="results__explanation" id="explanationBox">
+                    <div class="explanation__icon" id="explanationIcon"></div>
+                    <div class="explanation__text" id="explanationText"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error toast -->
+        <div class="toast" id="errorToast" hidden>
+            <span class="toast__icon">&#x26A0;&#xFE0F;</span>
+            <span class="toast__message" id="errorMessage"></span>
+            <button class="toast__close" id="closeToast">&times;</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Multimodal Automotive Defect Analysis &mdash; Master&rsquo;s Thesis Project</p>
+        <p class="footer__tech">EfficientNet-B0 &middot; DistilBERT &middot; PyTorch &middot; Flask</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
