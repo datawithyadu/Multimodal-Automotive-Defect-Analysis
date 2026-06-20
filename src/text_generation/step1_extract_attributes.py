@@ -145,7 +145,7 @@ def collect_image_paths(data_root: Path) -> list[dict]:
     Expected structure: data_root / {train,test} / {01-minor,02-moderate,03-severe} / *.jpg
     """
     records = []
-    for split_name in ["training", "testing"]:
+    for split_name in ["training", "Validation"]:
         split_dir = data_root / split_name
         if not split_dir.is_dir():
             print(f"Warning: {split_dir} not found, skipping.")

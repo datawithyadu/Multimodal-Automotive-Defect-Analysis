@@ -48,7 +48,8 @@ class CrossAttentionFusionClassifier(nn.Module):
         )
         # Remove the built-in classifier head and average pooling
         self.image_encoder.classifier = nn.Identity()
-        self.image_encoder.avgpool = nn.Identity()
+        # avgpool intentionally left intact — forward() calls .features() directly,
+        # bypassing avgpool to preserve the 7×7 spatial map needed for cross-attention
 
         if freeze_image_backbone:
             for param in self.image_encoder.parameters():
