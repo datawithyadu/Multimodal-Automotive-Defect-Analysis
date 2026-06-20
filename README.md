@@ -887,7 +887,7 @@ python src/training/significance_tests.py
 - [x] ~~Run text-only leakage test (Phase 2)~~ → 65.3% accuracy (text carries real severity signal via component/damage-type vocabulary; thesis framing adjusted to "fusion beats both unimodal baselines")
 - [x] ~~Finalize cross-attention implementation details~~ → d_k=512, num_heads=8, modality_dropout=0.1, L2 normalization
 - [x] ~~Build Phase 3: Concatenation fusion baseline~~ → 73.3% test accuracy, 73.2% test F1
-- [x] ~~Build Phase 4: Cross-attention fusion~~ → 73.4% test accuracy, 72.3% test F1
+- [x] ~~Build Phase 4: Cross-attention fusion~~ → 72.8% test accuracy, 72.2% test F1
 - [x] ~~Investigate whether moderate class F1 improves with multimodal fusion~~ → Yes: 0.47 (image) → 0.60 (concat) / 0.57 (cross-attn)
 - [x] ~~Answer all thesis research questions empirically with visualizations~~
 - [x] ~~Build inference demo (Flask/SPA) for practical application showcase~~
