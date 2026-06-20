@@ -13,3 +13,4 @@ numpy>=1.24.0
 transformers>=4.30.0
 flask>=2.3.0
 flask-cors>=4.0.0
+scipy>=1.11.0
