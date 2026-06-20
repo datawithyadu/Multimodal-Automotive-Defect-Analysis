@@ -1,0 +1,100 @@
+{
+  "caveat": "n=5 folds limits statistical power. Wilcoxon cannot achieve p<0.0625 two-tailed. Use mean difference and Cohen's d as primary evidence.",
+  "fold_scores": {
+    "image_only": [
+      0.6626,
+      0.7264,
+      0.6377,
+      0.6926,
+      0.6955
+    ],
+    "text_only": [
+      0.6879,
+      0.6355,
+      0.6376,
+      0.6451,
+      0.6284
+    ],
+    "concat_fusion": [
+      0.7164,
+      0.7008,
+      0.6742,
+      0.7195,
+      0.6994
+    ],
+    "cross_attention": [
+      0.7329,
+      0.7012,
+      0.687,
+      0.742,
+      0.6911
+    ]
+  },
+  "comparisons": [
+    {
+      "comparison": "concat_fusion vs image_only",
+      "mean_diff": 0.0191,
+      "direction": "concat_fusion > image_only",
+      "t_statistic": 1.3862,
+      "t_p_value": 0.2379,
+      "t_significant_p05": false,
+      "wilcoxon_statistic": 2.0,
+      "wilcoxon_p_value": 0.1875,
+      "wilcoxon_significant_p05": false,
+      "cohens_d": 0.6199,
+      "effect_size": "medium"
+    },
+    {
+      "comparison": "cross_attention vs image_only",
+      "mean_diff": 0.0279,
+      "direction": "cross_attention > image_only",
+      "t_statistic": 1.537,
+      "t_p_value": 0.1991,
+      "t_significant_p05": false,
+      "wilcoxon_statistic": 3.0,
+      "wilcoxon_p_value": 0.3125,
+      "wilcoxon_significant_p05": false,
+      "cohens_d": 0.6874,
+      "effect_size": "medium"
+    },
+    {
+      "comparison": "concat_fusion vs text_only",
+      "mean_diff": 0.0552,
+      "direction": "concat_fusion > text_only",
+      "t_statistic": 5.8484,
+      "t_p_value": 0.0043,
+      "t_significant_p05": true,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.0625,
+      "wilcoxon_significant_p05": false,
+      "cohens_d": 2.6155,
+      "effect_size": "large"
+    },
+    {
+      "comparison": "cross_attention vs text_only",
+      "mean_diff": 0.0639,
+      "direction": "cross_attention > text_only",
+      "t_statistic": 7.0159,
+      "t_p_value": 0.0022,
+      "t_significant_p05": true,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.0625,
+      "wilcoxon_significant_p05": false,
+      "cohens_d": 3.1376,
+      "effect_size": "large"
+    },
+    {
+      "comparison": "concat_fusion vs cross_attention",
+      "mean_diff": -0.0088,
+      "direction": "concat_fusion < cross_attention",
+      "t_statistic": -1.5694,
+      "t_p_value": 0.1916,
+      "t_significant_p05": false,
+      "wilcoxon_statistic": 2.0,
+      "wilcoxon_p_value": 0.1875,
+      "wilcoxon_significant_p05": false,
+      "cohens_d": -0.7019,
+      "effect_size": "medium"
+    }
+  ]
+}

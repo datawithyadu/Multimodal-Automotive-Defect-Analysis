@@ -61,9 +61,9 @@ def load_fusion_model(model_type="concat", fold=1, device="cpu"):
         model = ConcatFusionClassifier(
             num_classes=3,
             dropout_rate=0.4,
-            freeze_image_backbone=False,
+            freeze_image_backbone=True,
             unfreeze_image_last_n_blocks=3,
-            freeze_text_backbone=False,
+            freeze_text_backbone=True,
             unfreeze_text_last_n_layers=2,
         )
         weight_path = os.path.join(RESULTS_DIR, f"concat_fusion_fold{fold}.pt")
@@ -74,9 +74,9 @@ def load_fusion_model(model_type="concat", fold=1, device="cpu"):
             d_k=512,
             num_heads=8,
             modality_dropout_p=0.0,  # No dropout at inference
-            freeze_image_backbone=False,
+            freeze_image_backbone=True,
             unfreeze_image_last_n_blocks=3,
-            freeze_text_backbone=False,
+            freeze_text_backbone=True,
             unfreeze_text_last_n_layers=2,
         )
         weight_path = os.path.join(RESULTS_DIR, f"cross_attention_fusion_fold{fold}.pt")
@@ -96,7 +96,7 @@ def load_image_model(fold=1, device="cpu"):
     model = EfficientNetClassifier(
         num_classes=3,
         dropout_rate=0.3,
-        freeze_backbone=False,
+        freeze_backbone=True,
         unfreeze_last_n_blocks=3,
     )
     weight_path = os.path.join(RESULTS_DIR, f"image_only_fold{fold}.pt")
@@ -113,7 +113,7 @@ def load_text_model(fold=1, device="cpu"):
     model = DistilBertClassifier(
         num_classes=3,
         dropout_rate=0.3,
-        freeze_backbone=False,
+        freeze_backbone=True,
         unfreeze_last_n_layers=2,
     )
     weight_path = os.path.join(RESULTS_DIR, f"text_only_fold{fold}.pt")
@@ -361,6 +361,7 @@ def predict():
             "probabilities": prob_dict,
             "mode": mode,
             "model_used": model_type if mode == "multimodal" else mode,
+            "explanation": explanation,
         }
 
         return jsonify(response)

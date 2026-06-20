@@ -116,8 +116,8 @@ def rq2():
 
     # ── Left: overall test accuracy bar chart ──
     ax = axes[0]
-    models = ["Image-only", "Text-only", "Concat\nFusion", "Cross-Attn\nFusion"]
-    acc    = [70.2, 65.3, 73.3, 73.4]
+    models = ["Image-only", "Text-only", "Concat\nFusion", "Cross-Attn\nFusion (v2)"]
+    acc    = [70.2, 65.3, 73.3, 72.8]
     colors = [C_IMAGE, C_TEXT, C_CONCAT, C_CROSS]
     bars = ax.bar(models, acc, color=colors, edgecolor="white", linewidth=0.8, width=0.55)
     for bar, a in zip(bars, acc):
@@ -141,7 +141,7 @@ def rq2():
     f1_img   = [0.76, 0.47, 0.82]
     f1_txt   = [0.75, 0.56, 0.66]
     f1_cat   = [0.81, 0.60, 0.79]
-    f1_cross = [0.82, 0.57, 0.77]
+    f1_cross = [0.83, 0.57, 0.77]
 
     x = np.arange(len(classes))
     w = 0.18

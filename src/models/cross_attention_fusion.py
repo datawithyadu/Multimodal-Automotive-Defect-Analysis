@@ -181,7 +181,7 @@ class CrossAttentionFusionClassifier(nn.Module):
         # (batch, 49, d_k) -> (batch, d_k)
         fused_features = attn_output.mean(dim=1)
 
-        # 5. Classification
+        # 6. Classification
         logits = self.classifier(fused_features)
 
         if return_attention_weights:

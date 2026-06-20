@@ -4,7 +4,7 @@
 
 This project presents a **multimodal deep learning framework** for predicting the severity of automotive body damage from paired image and text inputs. Traditional approaches rely exclusively on visual analysis through Convolutional Neural Networks (CNNs), which struggle with ambiguous cases — particularly moderate damage that overlaps visually with both minor surface scratches and severe structural failures. This work demonstrates that **combining visual features with textual context through feature-level fusion outperforms both unimodal baselines**.
 
-The system pairs an **EfficientNet-B0** image encoder with a **DistilBERT** text encoder, fusing their intermediate representations via **cross-attention** to produce a joint severity prediction across three classes: Minor, Moderate, and Severe. A **severity-aware synthetic text generation pipeline** is introduced using a two-step GPT-4o/GPT-4o-mini architecture. Analysis revealed that damage descriptions naturally encode severity-relevant information through **component count** (minor damage typically affects 1 component; severe damage affects 3+) and **damage vocabulary** ("scratch" correlates with minor; "deformation" with severe) — reflecting real-world physics rather than artificial leakage. This makes text a **complementary signal** to visual evidence, and motivates fusion as a principled architectural choice.
+The system pairs an **EfficientNet-B0** image encoder with a **DistilBERT** text encoder, fusing their intermediate representations via concatenation and cross-attention to produce a joint severity prediction across three classes: Minor, Moderate, and Severe. A systematic comparison finds that **concatenation fusion achieves the highest overall macro-F1 (73.2%)**, while cross-attention leads on minor-class recall (83%), revealing complementary architectural strengths rather than a single dominant approach. A **severity-aware synthetic text generation pipeline** is introduced using a two-step GPT-4o/GPT-4o-mini architecture. Analysis revealed that damage descriptions naturally encode severity-relevant information through **component count** (minor damage typically affects 1 component; severe damage affects 3+) and **damage vocabulary** ("scratch" correlates with minor; "deformation" with severe) — reflecting real-world physics rather than artificial leakage. This makes text a **complementary signal** to visual evidence, and motivates fusion as a principled architectural choice.
 
 ---
 
@@ -52,7 +52,7 @@ By supplementing visual analysis with **textual context** (damage reports, techn
 
 1. **Severity-aware synthetic text pipeline** — a two-step generation approach using GPT-4o vision and GPT-4o-mini that produces descriptions capturing real-world damage attributes (component identity, damage type, multi-component involvement) that naturally correlate with severity
 2. **Empirical demonstration of complementary modalities** — image branch captures visual extent and spatial damage patterns; text branch captures component identity and damage vocabulary — each provides different evidence
-3. **Cross-attention fusion for damage assessment** — demonstrating that directed attention from image regions to text tokens outperforms both image-only and text-only baselines, and outperforms simple feature concatenation
+3. **Systematic fusion architecture comparison** — evaluating concatenation and cross-attention fusion under identical conditions; both outperform unimodal baselines, with concat achieving higher macro-F1 (73.2% vs 72.2%) and cross-attention leading on minor-class recall (83% vs 74%), demonstrating that the choice of fusion strategy produces complementary rather than uniformly superior results
 4. **Systematic modality analysis** — showing that text-only DistilBERT achieves 65.3% accuracy (vs 70.2% image-only), confirming text as a genuine second signal rather than a neutral context layer
 
 ---
@@ -429,7 +429,7 @@ Attention(Q, K, V) = softmax(Q·K^T / √d_k) · V
 
 **Why image-as-query, text-as-key/value?** This asymmetry reflects our design: the image is the primary signal, and it should "ask questions" that the text answers. A damaged region of the image can look up whether the text mentions the corresponding component, providing contextual enrichment precisely where visual analysis is uncertain.
 
-**Thesis contribution**: The performance gap between cross-attention and concatenation demonstrates that modality interaction matters — simply having both modalities is not enough; the model needs a mechanism to align them.
+**Thesis contribution**: Cross-attention achieves higher minor-class recall (83% vs 74% for concat) and comparable overall accuracy (73.4% vs 73.3%), but lower macro-F1 (72.3% vs 73.2%) due to weaker moderate-class performance. This reveals a meaningful architectural trade-off: concat fusion is stronger for the ambiguous moderate class, while cross-attention's token-alignment mechanism excels at confidently identifying non-severe damage. The finding that these architectures have complementary strengths — rather than one clearly dominating — is itself a contribution of the comparison.
 
 ### Option C: Gated Fusion (Alternative)
 
@@ -507,7 +507,7 @@ A rigorous two-tier evaluation strategy ensures both reliable model comparison a
 │ Image-only (CNN)     │ 68.8 ± 3.0%   │ 68.3 ± 3.0%   │ 68.4%        │
 │ Text-only (BERT)     │ 64.7 ± 2.0%   │ 64.7 ± 2.1%   │ 65.8%        │
 │ Concat fusion        │ 70.2 ± 1.8%   │ 70.2 ± 1.6%   │ **73.2%**    │ ← +4.8% over image-only
-│ Cross-attention      │ 69.9 ± 1.4%   │ 69.6 ± 1.6%   │ 72.3%        │ ← +3.9% over image-only
+│ Cross-attention (v2) │ 71.2 ± 2.3%   │ 71.1 ± 2.2%   │ 72.2%        │ ← +3.8% over image-only
 └──────────────────────┴────────────────┴────────────────┴──────────────┘
 ```
 
@@ -515,7 +515,7 @@ Key per-class F1 comparison (moderate class is the hardest):
 
 | Class | Image-only | Text-only | Concat Fusion | Cross-Attention |
 |---|---|---|---|---|
-| Minor | 0.76 | 0.75 | **0.81** | **0.82** |
+| Minor | 0.76 | 0.75 | **0.81** | **0.83** |
 | Moderate | 0.47 | 0.56 | **0.60** | 0.57 |
 | Severe | **0.82** | 0.66 | 0.79 | 0.77 |
 
@@ -647,38 +647,38 @@ Actual Minor [182     63       1  ]  ← 74% recall
 
 | Fold | Val Accuracy | Val F1 (Macro) |
 |---|---|---|
-| 1 | 70.1% | 0.702 |
-| 2 | 68.4% | 0.674 |
-| 3 | 68.4% | 0.680 |
-| 4 | **72.2%** | **0.718** |
-| 5 | 70.2% | 0.706 |
-| **Mean** | **69.9% ± 1.4%** | **0.696 ± 0.016** |
+| 1 | 73.5% | 0.733 |
+| 2 | 70.5% | 0.701 |
+| 3 | 68.8% | 0.687 |
+| 4 | **74.3%** | **0.742** |
+| 5 | 68.9% | 0.691 |
+| **Mean** | **71.2% ± 2.3%** | **0.711 ± 0.022** |
 
 **Held-Out Test Set (744 samples — validation images):**
 
 | Class | Precision | Recall | F1-Score | Support |
 |---|---|---|---|---|
-| Minor | 0.75 | 0.91 | **0.82** | 246 |
-| Moderate | 0.61 | 0.54 | **0.57** | 225 |
-| Severe | 0.82 | 0.73 | **0.77** | 273 |
-| **Macro Avg** | **0.73** | **0.73** | **0.72** | **744** |
+| Minor | 0.83 | 0.83 | **0.83** | 246 |
+| Moderate | 0.57 | 0.57 | **0.57** | 225 |
+| Severe | 0.77 | 0.77 | **0.77** | 273 |
+| **Macro Avg** | **0.72** | **0.72** | **0.72** | **744** |
 
-**Test Accuracy: 73.4%** | **Test F1 (Macro): 72.3%** | **+3.9% over image-only baseline**
+**Test Accuracy: 72.8%** | **Test F1 (Macro): 72.2%** | **+3.8% over image-only baseline**
 
 **Confusion Matrix:**
 ```
                Predicted
             Minor  Moderate  Severe
-Actual Minor [225     16       5  ]  ← 91% recall (best across all models)
-  Moderate   [ 64    122      39  ]  ← 54% recall
-    Severe   [ 12     62     199  ]  ← 73% recall
+Actual Minor [203     38       5  ]  ← 83% recall
+  Moderate   [ 38    128      59  ]  ← 57% recall
+    Severe   [  4     58     211  ]  ← 77% recall
 ```
 
 **Key observations:**
-- **Minor class recall is highest** (91%) across all models — cross-attention excels at identifying non-severe damage
-- **Moderate class F1 (0.57)** is below concat fusion (0.60) but still well above image-only (0.47), confirming multimodal benefit
-- **Cross-attention achieves comparable overall accuracy** (73.4% vs 73.3%) to concat fusion, but with a different error profile
-- The cross-attention model was re-trained with **modality dropout** (p=0.1) and **L2 normalization** to encourage balanced modality usage — results from this v2 run are pending
+- **Minor class F1 is highest** (0.83) across all models — cross-attention leads on non-severe damage identification
+- **Moderate class F1 (0.57)** is below concat fusion (0.60) but well above image-only (0.47), confirming multimodal benefit
+- **Cross-attention v2 achieves slightly lower overall accuracy** (72.8% vs 73.3%) than concat fusion, with more balanced recall across moderate (57%) and severe (77%) classes
+- The v2 model was trained with **modality dropout** (p=0.1) and **L2 normalization**, raising CV mean F1 from 69.6% (v1) to 71.1% (v2) at the cost of higher cross-fold variance (±2.2% vs ±1.6%)
 
 
 ### Evaluation Metrics
@@ -850,6 +850,6 @@ python src/training/train_image_only.py
 - [x] ~~Investigate whether moderate class F1 improves with multimodal fusion~~ → Yes: 0.47 (image) → 0.60 (concat) / 0.57 (cross-attn)
 - [x] ~~Answer all thesis research questions empirically with visualizations~~
 - [x] ~~Build inference demo (Flask/SPA) for practical application showcase~~
-- [ ] Determine statistical significance testing approach for comparing fusion methods
+- [x] ~~Determine statistical significance testing approach for comparing fusion methods~~ → Paired t-test + Wilcoxon signed-rank in `src/training/significance_tests.py`; note n=5 limits power — Cohen's d reported as primary effect size
 
 

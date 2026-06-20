@@ -23,7 +23,7 @@ from tqdm import tqdm
 # Configuration
 # -------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DATA_ROOT = Path(r"C:\D_Folder\Defect seviority dataset\dataset")
+DATA_ROOT = PROJECT_ROOT / "data"
 OUTPUT_FILE = PROJECT_ROOT / "data" / "image_attributes.json"
 
 # Load API key from .env
