@@ -24,7 +24,6 @@ from sklearn.metrics import (
     confusion_matrix,
     classification_report,
 )
-from tqdm import tqdm
 
 # Add src to path
 SRC_DIR = Path(__file__).resolve().parents[1]
@@ -245,7 +244,12 @@ def evaluate_held_out_test(best_fold_model_path: str) -> dict:
     print(f"  Test samples: {len(test_dataset)}")
 
     # Load best model
-    model = EfficientNetClassifier(num_classes=NUM_CLASSES).to(DEVICE)
+    model = EfficientNetClassifier(
+        num_classes=NUM_CLASSES,
+        dropout_rate=0.4,
+        freeze_backbone=True,
+        unfreeze_last_n_blocks=3,
+    ).to(DEVICE)
     model.load_state_dict(torch.load(best_fold_model_path, map_location=DEVICE, weights_only=True))
 
     criterion = nn.CrossEntropyLoss()

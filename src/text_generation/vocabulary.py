@@ -5,6 +5,7 @@ Organized by ATTRIBUTE TYPE (not severity) to prevent label leakage.
 The same words can appear across any severity level — the model must
 rely on the image to determine how bad the damage is.
 """
+import re
 
 # What type of damage is visible
 DAMAGE_TYPES = [
@@ -80,5 +81,6 @@ def validate_text(text: str) -> tuple[bool, list[str]]:
         (is_valid, list_of_found_banned_words)
     """
     text_lower = text.lower()
-    found = [word for word in BANNED_SEVERITY_WORDS if word in text_lower]
+    found = [w for w in BANNED_SEVERITY_WORDS
+             if re.search(r'\b' + re.escape(w) + r'\b', text_lower)]
     return len(found) == 0, found

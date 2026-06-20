@@ -132,7 +132,8 @@ def extract_attributes(image_path: Path) -> dict:
         return attributes
 
     except json.JSONDecodeError as e:
-        return {"error": f"JSON parse error: {e}", "raw_response": content}
+        raw = content if "content" in dir() else ""
+        return {"error": f"JSON parse error: {e}", "raw_response": raw}
     except Exception as e:
         return {"error": str(e)}
 

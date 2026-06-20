@@ -12,6 +12,7 @@ import os
 import json
 import base64
 import traceback
+import re
 
 # Add project root to path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -44,6 +45,17 @@ IMAGE_SIZE = 224
 
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "results")
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "frontend")
+
+_MIME_MAP = {"jpeg": "image/jpeg", "jpg": "image/jpeg", "png": "image/png",
+             "webp": "image/webp", "gif": "image/gif", "bmp": "image/bmp"}
+
+def _detect_mime(image_bytes: bytes) -> str:
+    try:
+        img = Image.open(io.BytesIO(image_bytes))
+        fmt = (img.format or "JPEG").lower()
+        return _MIME_MAP.get(fmt, "image/jpeg")
+    except Exception:
+        return "image/jpeg"
 
 # ── Inference transforms (no augmentation) ─────────────────────────
 inference_transform = transforms.Compose([
@@ -84,7 +96,7 @@ def load_fusion_model(model_type="concat", fold=1, device="cpu"):
         raise ValueError(f"Unknown model_type: {model_type}")
 
     print(f"  Loading fusion weights: {weight_path}")
-    state_dict = torch.load(weight_path, map_location=device, weights_only=False)
+    state_dict = torch.load(weight_path, map_location=device, weights_only=True)
     model.load_state_dict(state_dict)
     model.to(device)
     model.eval()
@@ -101,7 +113,7 @@ def load_image_model(fold=1, device="cpu"):
     )
     weight_path = os.path.join(RESULTS_DIR, f"image_only_fold{fold}.pt")
     print(f"  Loading image-only weights: {weight_path}")
-    state_dict = torch.load(weight_path, map_location=device, weights_only=False)
+    state_dict = torch.load(weight_path, map_location=device, weights_only=True)
     model.load_state_dict(state_dict)
     model.to(device)
     model.eval()
@@ -118,7 +130,7 @@ def load_text_model(fold=1, device="cpu"):
     )
     weight_path = os.path.join(RESULTS_DIR, f"text_only_fold{fold}.pt")
     print(f"  Loading text-only weights: {weight_path}")
-    state_dict = torch.load(weight_path, map_location=device, weights_only=False)
+    state_dict = torch.load(weight_path, map_location=device, weights_only=True)
     model.load_state_dict(state_dict)
     model.to(device)
     model.eval()
@@ -168,9 +180,10 @@ def generate_explanation(prediction, confidence, probabilities, user_text=None, 
     # If image was provided, include it for visual context
     if image_bytes:
         b64_img = base64.b64encode(image_bytes).decode("utf-8")
+        mime = _detect_mime(image_bytes)
         messages[0]["content"].append({
             "type": "image_url",
-            "image_url": {"url": f"data:image/jpeg;base64,{b64_img}", "detail": "low"},
+            "image_url": {"url": f"data:{mime};base64,{b64_img}", "detail": "low"},
         })
 
     messages[0]["content"].append({"type": "text", "text": prompt})
@@ -197,6 +210,7 @@ def validate_vehicle_image(image_bytes):
         return True, ""
 
     b64_img = base64.b64encode(image_bytes).decode("utf-8")
+    mime = _detect_mime(image_bytes)
 
     try:
         resp = oai_client.chat.completions.create(
@@ -206,7 +220,7 @@ def validate_vehicle_image(image_bytes):
                 "content": [
                     {
                         "type": "image_url",
-                        "image_url": {"url": f"data:image/jpeg;base64,{b64_img}", "detail": "low"},
+                        "image_url": {"url": f"data:{mime};base64,{b64_img}", "detail": "low"},
                     },
                     {
                         "type": "text",
@@ -264,7 +278,7 @@ def predict():
     try:
         # Parse inputs
         has_image = "image" in request.files and request.files["image"].filename != ""
-        text = request.form.get("text", "").strip()
+        text = request.form.get("text", "").strip()[:2000]
         has_text = len(text) > 0
 
         if not has_image and not has_text:

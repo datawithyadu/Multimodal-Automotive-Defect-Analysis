@@ -86,7 +86,6 @@ class MultimodalDamageDataset(Dataset):
         self.texts = texts  # Keep raw texts for subset creation
 
         # Pre-tokenize ALL texts at init time (batch operation, much faster than per-item)
-        print(f"    Tokenizing {len(texts)} texts...", end=" ", flush=True)
         encodings = tokenizer(
             texts,
             max_length=max_length,
@@ -96,7 +95,6 @@ class MultimodalDamageDataset(Dataset):
         )
         self.input_ids      = encodings["input_ids"]       # (N, max_length)
         self.attention_mask = encodings["attention_mask"]  # (N, max_length)
-        print("done.")
 
     def __len__(self):
         return len(self.image_paths)

@@ -174,6 +174,7 @@ class CrossAttentionFusionClassifier(nn.Module):
             key=keys,
             value=values,
             key_padding_mask=key_padding_mask,
+            need_weights=return_attention_weights,
         )  # attn_output: (batch, 49, d_k), attn_weights: (batch, 49, seq_len)
 
         # 5. Aggregation

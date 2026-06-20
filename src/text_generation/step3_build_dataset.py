@@ -63,8 +63,11 @@ def main():
 
     df = pd.DataFrame(rows)
 
-    # Shuffle within each split (important for training)
-    df = df.sample(frac=1, random_state=42).reset_index(drop=True)
+    # Shuffle training split only (preserves test-split row order)
+    train_mask = df["split"] == "training"
+    df_train = df[train_mask].sample(frac=1, random_state=42).reset_index(drop=True)
+    df_test  = df[~train_mask].reset_index(drop=True)
+    df = pd.concat([df_train, df_test], ignore_index=True)
 
     # Save
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)

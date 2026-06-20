@@ -2,6 +2,7 @@
 Phase 3: Run held-out test evaluation only (after training completed).
 Uses the best fold model saved from training.
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -27,6 +28,10 @@ RESULTS_DIR  = PROJECT_ROOT / "results"
 DEVICE       = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 BATCH_SIZE   = 16
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--fold", type=int, default=4, help="Fold whose weights to evaluate (default: 4, best CV fold)")
+args = parser.parse_args()
+
 print("=" * 60)
 print("  Phase 3: Held-Out Test Evaluation")
 print("=" * 60)
@@ -43,9 +48,16 @@ test_ds = MultimodalDamageDataset.from_csv(
 test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
 print(f"  Test samples: {len(test_ds)}")
 
-# Best fold = 4 (F1=0.7195)
-best_model_path = RESULTS_DIR / "concat_fusion_fold4.pt"
-model = ConcatFusionClassifier(num_classes=NUM_CLASSES).to(DEVICE)
+best_model_path = RESULTS_DIR / f"concat_fusion_fold{args.fold}.pt"
+print(f"  Loading: {best_model_path.name}")
+model = ConcatFusionClassifier(
+    num_classes=NUM_CLASSES,
+    dropout_rate=0.4,
+    freeze_image_backbone=True,
+    unfreeze_image_last_n_blocks=3,
+    freeze_text_backbone=True,
+    unfreeze_text_last_n_layers=2,
+).to(DEVICE)
 model.load_state_dict(torch.load(best_model_path, map_location=DEVICE, weights_only=True))
 model.eval()
 

@@ -28,7 +28,6 @@ from sklearn.metrics import (
     classification_report,
 )
 from transformers import DistilBertTokenizer
-from tqdm import tqdm
 
 # Add src to path
 SRC_DIR = Path(__file__).resolve().parents[1]
@@ -275,7 +274,12 @@ def evaluate_held_out_test(
     print(f"  Test samples: {len(test_dataset)}")
 
     # Load best model
-    model = DistilBertClassifier(num_classes=NUM_CLASSES).to(DEVICE)
+    model = DistilBertClassifier(
+        num_classes=NUM_CLASSES,
+        dropout_rate=0.3,
+        freeze_backbone=True,
+        unfreeze_last_n_layers=2,
+    ).to(DEVICE)
     model.load_state_dict(torch.load(best_fold_model_path, map_location=DEVICE, weights_only=True))
 
     criterion = nn.CrossEntropyLoss()

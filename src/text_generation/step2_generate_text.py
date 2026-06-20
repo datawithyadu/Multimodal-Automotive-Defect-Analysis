@@ -10,6 +10,7 @@ Output: data/synthetic_descriptions.json
 
 import json
 import os
+import re
 import random
 import sys
 import time
@@ -144,9 +145,8 @@ def generate_descriptions(attributes: dict) -> list[str]:
                 # Re-clean by removing banned words
                 cleaned = desc
                 for word in banned_found:
-                    cleaned = cleaned.replace(word, "").replace(word.title(), "")
-                # Remove double spaces
-                cleaned = " ".join(cleaned.split())
+                    cleaned = re.sub(re.escape(word), "", cleaned, flags=re.IGNORECASE)
+                cleaned = " ".join(cleaned.split()).strip()
                 validated.append(cleaned)
 
         return validated
